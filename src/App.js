@@ -1,76 +1,69 @@
 import { useEffect, useState } from 'react'
 import BarList from './components/BarList'
 import './App.css'
+import axios from 'axios'
+import UserInput from './components/UserInput'
 
 function App() {
   const [barList, setBarList] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [locationUnavailable, setLocationUnavailable] = useState(false)
   const [currentLocation, setCurrentLocation] = useState({})
-  const [error, setError] = useState(null)
+  const [locationUnavailable, setLocationUnavailable] = useState(true)
+
+  const baseURL = new URL('https://api.openbrewerydb.org/v1/breweries')
   
-  const success = (position) => {
-    const { latitude, longitude } = position.coords
-    setCurrentLocation({ latitude, longitude })
-  }
-  
-  const failure = () => {
-    setLocationUnavailable(true)
-  }
-  
-  const getLocation = () => {
-    navigator.geolocation.getCurrentPosition(success, failure)
-  }
-  
-  useEffect(() => {
+  async function fetchData() {
     if ("geolocation" in navigator) {
-      getLocation()
+      const location = await getLocation()
+      await findBarsHandler(location)
     } else {
-      setLocationUnavailable(true)
+      await findBarsHandler()
     }
-  }, [])
-  
-  const findBarsHandler = async () => {
-    setIsLoading(true)
-    try {
-      const url = 'https://api.openbrewerydb.org/v1/breweries'
-      if (currentLocation) {
-        //append current location data to URL
-      }
-      //else append zip code from user input form 
-      const response = await fetch(url)
-      //fetch does not throw its own errors, unlike Axios
-      if (!response.ok) {
-        throw new Error('API response was not okay')
-      }
-      const data = await response.json()
-      setBarList(data)
-    } catch (error) {
-      setError(error.message)
-    }
-    setIsLoading(false)
   }
 
+  async function getLocation() {
+    const promise = new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject)
+    })
+    try {
+      const {coords: location} = await promise
+      setCurrentLocation(location)
+      setLocationUnavailable(false)
+      return location
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  
+  async function findBarsHandler(location=currentLocation) {
+    try {
+      if (!!location.latitude) {
+        const query = `${location.latitude},${location.longitude}`
+        baseURL.searchParams.append("by_dist", query)
+      } else if (location.length === 5) {
+        baseURL.searchParams.append("by_postal", location)
+      }
+      const response = await axios.get(baseURL)
+      setBarList(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+  
   let content = <p>Found no Bars</p>
 
   if (barList.length > 0) {
     content = <BarList bars={barList}/>
   }
 
-  if (error) {
-    content = <p>{error}</p>
-  }
-
-  if (isLoading) {
-    content = <p>Loading...</p>
-  }
-
   return (
-    //conditionally render the zipcode input form if geolocation fails/is blocked
     <>
-      <section>
-        <button onClick={findBarsHandler}>Find Bars</button>
-      </section>
+      {locationUnavailable && <section>
+        <UserInput findBars={findBarsHandler}></UserInput>
+      </section>}
       <section>
         {content}
       </section>
