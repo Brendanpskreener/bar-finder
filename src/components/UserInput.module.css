@@ -1,0 +1,10 @@
+.user-input {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  height: fit-content;
+  gap: 1rem;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+}

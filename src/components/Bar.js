@@ -2,7 +2,7 @@ import classes from './Bar.module.css'
 
 const Bar = (props) => {
   return (
-    <li className={classes.bar}>
+    <div className={classes.bar}>
       <h2>{props.name}</h2>
       <h3>{props.street}</h3>
       <h3>{props.city}</h3>
@@ -10,7 +10,7 @@ const Bar = (props) => {
       <h3>{props.zipcode}</h3>
       <h3>{props.phone}</h3>
       <h3>{props.site}</h3>
-    </li>
+    </div>
   )
 }
 

@@ -12,12 +12,9 @@ function App() {
   const baseURL = new URL('https://api.openbrewerydb.org/v1/breweries')
   
   async function fetchData() {
-    if ("geolocation" in navigator) {
-      const location = await getLocation()
-      await findBarsHandler(location)
-    } else {
-      await findBarsHandler()
-    }
+    const location = await getLocation()
+    console.log(location)
+    await findBarsHandler(location)
   }
 
   async function getLocation() {
@@ -34,15 +31,17 @@ function App() {
     }
   }
   
-  async function findBarsHandler(location=currentLocation) {
+  async function findBarsHandler(formData) {
+    console.log(currentLocation)
     try {
-      if (!!location.latitude) {
-        const query = `${location.latitude},${location.longitude}`
+      if (formData.locationToggle) {
+        const query = `${currentLocation.latitude},${currentLocation.longitude}`
         baseURL.searchParams.append("by_dist", query)
-      } else if (location.length === 5) {
-        baseURL.searchParams.append("by_postal", location)
+      } else if (formData.zipcode !== '') {
+        baseURL.searchParams.append("by_postal", formData.zipcode)
       }
       const response = await axios.get(baseURL)
+      console.log(response)
       setBarList(response.data)
     } catch (error) {
       console.log(error)
@@ -53,21 +52,20 @@ function App() {
     fetchData()
   }, [])
   
-  let content = <p>Found no Bars</p>
-
-  if (barList.length > 0) {
-    content = <BarList bars={barList}/>
-  }
-
   return (
     <>
-      {locationUnavailable && <section>
-        <UserInput findBars={findBarsHandler}></UserInput>
-      </section>}
-      <section>
-        {content}
-      </section>
+      <h1>
+        Bar Finder
+      </h1>
+      <div className='container'>
+        <div className='left'>
+          <UserInput findBars={findBarsHandler} locationUnavailable={locationUnavailable} />
+        </div>
+        {barList.length > 0 ? <BarList bars={barList}/> : <section>Found no Bars</section>}
+        <div className='right' />
+      </div>
     </>
+    
   );
 }
 

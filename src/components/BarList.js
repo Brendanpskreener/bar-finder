@@ -3,7 +3,7 @@ import Bar from './Bar'
 
 const BarList = (props) => {
   return (
-    <ul className={classes['bar-list']}>
+    <div className={classes['bar-list']}>
       {props.bars.map((bar) => (
         <Bar
           key={bar.id} 
@@ -16,7 +16,7 @@ const BarList = (props) => {
           site={bar.website_url}
         />
       ))}
-    </ul>
+    </div>
   )
 }
 
