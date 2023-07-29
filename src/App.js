@@ -1,69 +1,71 @@
 import { useEffect, useState } from 'react'
 import BarList from './components/BarList'
 import './App.css'
-import axios from 'axios'
 import UserInput from './components/UserInput'
+import findBars from './repositories/Bars'
 
 function App() {
   const [barList, setBarList] = useState([])
   const [currentLocation, setCurrentLocation] = useState({})
   const [locationUnavailable, setLocationUnavailable] = useState(true)
+  const [mounted, setMounted] = useState(false)
 
-  const baseURL = new URL('https://api.openbrewerydb.org/v1/breweries')
+  const defaultState = {name:'', zipcode:'', locationToggle:!locationUnavailable}
   
-  async function fetchData() {
-    const location = await getLocation()
-    console.log(location)
-    await findBarsHandler(location)
-  }
-
   async function getLocation() {
+    console.log('calling get location')
     const promise = new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(resolve, reject)
     })
     try {
-      const {coords: location} = await promise
-      setCurrentLocation(location)
+      const {coords: {latitude, longitude}} = await promise
+      setCurrentLocation({latitude, longitude})
       setLocationUnavailable(false)
-      return location
     } catch (error) {
       console.log(error)
+    } finally {
+      setMounted(true)
     }
   }
   
-  async function findBarsHandler(formData) {
-    console.log(currentLocation)
+  async function findBarsHandler(query) {
+    console.log('calling find bars')
     try {
-      if (formData.locationToggle) {
-        const query = `${currentLocation.latitude},${currentLocation.longitude}`
-        baseURL.searchParams.append("by_dist", query)
-      } else if (formData.zipcode !== '') {
-        baseURL.searchParams.append("by_postal", formData.zipcode)
-      }
-      const response = await axios.get(baseURL)
-      console.log(response)
-      setBarList(response.data)
+      const bars = await findBars({...query, ...currentLocation})
+      setBarList(bars)
     } catch (error) {
       console.log(error)
     }
   }
 
   useEffect(() => {
-    fetchData()
+    setTimeout(() => {
+      getLocation()
+    }, 500);
   }, [])
-  
+
+  useEffect(() => {
+    if (mounted) {
+      findBarsHandler(defaultState)
+    }
+  }, [mounted])
+
+  console.log('app render')
+
   return (
     <>
       <h1>
         Bar Finder
       </h1>
-      <div className='container'>
-        <div className='left'>
-          <UserInput findBars={findBarsHandler} locationUnavailable={locationUnavailable} />
+      {!mounted ? <section>Loading...</section>: <div>
+        <div className='container'>
+          <div className='left'>
+            <UserInput findBars={findBarsHandler} locationUnavailable={locationUnavailable} defaultState={defaultState}/>
+          </div>
+          {barList.length > 0 ? <BarList bars={barList}/> : <section>Found no Bars</section>}
+          <div className='right' />
         </div>
-        {barList.length > 0 ? <BarList bars={barList}/> : <section>Found no Bars</section>}
-        <div className='right' />
-      </div>
+      </div>}
     </>
     
   );
