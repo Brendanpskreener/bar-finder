@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import classes from './UserInput.module.css'
 
-const UserInput = ({defaultState, findBars, locationUnavailable}) => { 
+const UserInput = ({defaultState, findBars, locationUnavailable, currentPage, setCurrentPage}) => { 
   const [formData, setFormData] = useState(defaultState)
   const [timer, setTimer] = useState(null)
   const [formIsValid, setFormIsValid] = useState(false)
@@ -10,7 +10,6 @@ const UserInput = ({defaultState, findBars, locationUnavailable}) => {
     clearTimeout(timer)
     const newTimer = setTimeout(() => {
       setFormIsValid(true)
-      console.log('API called')
     }, 300);
     setTimer(newTimer)
   }
@@ -42,23 +41,22 @@ const UserInput = ({defaultState, findBars, locationUnavailable}) => {
     if (formIsValid) {
       findBars(formData)
       setFormIsValid(false)
+      setCurrentPage(1)
     }
   }, [formIsValid])
 
-  console.log(formData, 'user input render')
+  useEffect(() => {
+    findBars({...formData, page: currentPage})
+  }, [currentPage])
 
   return (
     <form className={classes['user-input']}>
       <input type="search" placeholder="Bar Name" name="name" value={formData.name} onChange={handleNameChange} />
-      <label>
-        <input type="search" placeholder="Zip Code" name="zipcode" value={formData.zipcode} onChange={handleZipChange} disabled={formData.locationToggle} />
-        {/* {formData.zipcode.length > 0 && !formIsValid ? <p>Zipcode must be valid</p> : ''} */}
-      </label>
+      <input type="search" placeholder="Zip Code" name="zipcode" value={formData.zipcode} onChange={handleZipChange} disabled={formData.locationToggle} />
       <label>
         <input type="checkbox" name="locationToggle" checked={formData.locationToggle} onChange={handleLocationToggleChange} disabled={locationUnavailable} />
         {locationUnavailable ? 'User Denied Location': 'Use Location' }
       </label>
-      
     </form>
   )
 }

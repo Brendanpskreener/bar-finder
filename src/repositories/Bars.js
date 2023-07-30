@@ -1,22 +1,26 @@
 import axios from "axios"
 
 async function findBars(args) {
+  const {name, zipcode, page, locationToggle, latitude, longitude} = args
   const baseURL = new URL('https://api.openbrewerydb.org/v1/breweries')
-  console.log(args)
+  const perPage = 4
+  baseURL.searchParams.append("page", page)
+  baseURL.searchParams.append("per_page", perPage)
+  
   try {
-    if (args.locationToggle && args.latitude) {
-      const query = `${args.latitude},${args.longitude}`
+    if (locationToggle && latitude) {
+      const query = `${latitude},${longitude}`
       baseURL.searchParams.append("by_dist", query)
-    } else if (!args.locationToggle && args.zipcode) {
-      baseURL.searchParams.append("by_postal", args.zipcode)
+    } else if (!locationToggle && zipcode) {
+      baseURL.searchParams.append("by_postal", zipcode)
     } 
-    if (args.name) {
-      baseURL.searchParams.append("by_name", args.name)
+    if (name) {
+      baseURL.searchParams.append("by_name", name)
     }
     const response = await axios.get(baseURL)
     return response.data
   } catch (error) {
-    console.log(error)
+    console.warn(error)
   }
 }
 
