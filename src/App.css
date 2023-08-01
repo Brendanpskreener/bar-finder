@@ -1,15 +1,40 @@
 .container {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 850px auto;
 }
 
-.left {
-  display: flex;
+.pagination {
+  grid-row-start: 2;
+  grid-column-start: 2;
+  display:flex;
   justify-content: center;
-  flex: 1;
+  gap: 1em;
+  margin: 1em auto;
+  background-color: white;
+  border-radius: 12px;
+  padding: 1em;
 }
 
-.right {
-  flex: 1;
+.page {
+  border: 4px solid rgb(0, 0, 0);
+  padding: .25em;
+}
+
+.loading {
+  text-align: center;
+  color: white;
+  font-size: 40px
+}
+
+.zilch {
+  text-align: center;
+  background-color: white;
+  border-radius: 12px;
+  padding: 1em;
+  margin: 0 auto auto auto;
+  font-size: 2em;
+  font-weight: bold;
 }
 
 h1 {
@@ -18,28 +43,12 @@ h1 {
   font-size: 40px
 }
 
-ul {
-  border: 4px solid rgb(0, 0, 0);
-}
-
-section {
-  display: flex;
-  justify-content: space-between;
-  margin: 1rem auto;
-  width: 400px;
-  text-align: center;
-  background-color: white;
-  padding: 2rem;
-  border-radius: 12px;
-}
-
 button {
   font: inherit;
   cursor: pointer;
   background: #230052;
   border: 1px solid #230052;
   color: white;
-  padding: 0.75rem 2rem;
   border-radius: 20px;
 }
 

@@ -50,14 +50,18 @@ const UserInput = ({defaultState, findBars, locationUnavailable, currentPage, se
   }, [currentPage])
 
   return (
-    <form className={classes['user-input']}>
-      <input type="search" placeholder="Bar Name" name="name" value={formData.name} onChange={handleNameChange} />
-      <input type="search" placeholder="Zip Code" name="zipcode" value={formData.zipcode} onChange={handleZipChange} disabled={formData.locationToggle} />
-      <label>
-        <input type="checkbox" name="locationToggle" checked={formData.locationToggle} onChange={handleLocationToggleChange} disabled={locationUnavailable} />
-        {locationUnavailable ? 'User Denied Location': 'Use Location' }
-      </label>
-    </form>
+    <div className={classes['user-input']}>
+      <div>Filters</div>
+      <form>
+        <input type="search" placeholder="Bar Name" name="name" value={formData.name} onChange={handleNameChange} />
+        <input type="search" placeholder="Zip Code" name="zipcode" value={formData.zipcode} onChange={handleZipChange} disabled={formData.locationToggle} />
+        <label>
+          <input type="checkbox" name="locationToggle" checked={formData.locationToggle} onChange={handleLocationToggleChange} disabled={locationUnavailable} />
+          {locationUnavailable ? 'User Denied Location': 'Use Location' }
+        </label>
+      </form>
+    </div>
+    
   )
 }
 

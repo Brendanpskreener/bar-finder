@@ -1,15 +1,15 @@
-const Pagination = ({currentPage, previousPage, nextPage}) => {
+const Pagination = ({currentPage, previousPage, nextPage, perPage, pageLength}) => {
 
   return (
-    <section>
+    <div className="pagination">
       <button onClick={previousPage}>
         Prev
       </button>
-      <ul>{currentPage}</ul>
-      <button onClick={nextPage}>
+      <div className="page">{currentPage}</div>
+      <button onClick={nextPage} disabled={pageLength < perPage}>
         Next
       </button>
-    </section>
+    </div>
   )
 }
 

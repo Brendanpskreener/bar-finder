@@ -13,6 +13,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1)
 
   const defaultState = {name:'', zipcode:'', page:1, locationToggle:!locationUnavailable}
+  const perPage = 4
   
   async function getLocation() {
     const promise = new Promise((resolve, reject) => {
@@ -63,28 +64,24 @@ function App() {
       <h1>
         Bar Finder
       </h1>
-      {!mounted ? <section>Loading...</section>: <div>
+      {!mounted ? <div className='loading'>Loading...</div>:
         <div className='container'>
-          <div className='left'>
-            <UserInput 
-              findBars={findBarsHandler} 
-              locationUnavailable={locationUnavailable} 
-              defaultState={defaultState}
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-            />
-          </div>
-          <div>
-            {barList.length > 0 ? <BarList bars={barList}/> : <section>Found no Bars</section>}
-            <Pagination 
-              currentPage={currentPage}
-              previousPage={previousPage}
-              nextPage={nextPage}
-            />
-          </div>
-          <div className='right' />
-        </div>
-      </div>}
+          <UserInput 
+            findBars={findBarsHandler} 
+            locationUnavailable={locationUnavailable} 
+            defaultState={defaultState}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
+          {barList.length > 0 ? <BarList bars={barList}/> : <div className='zilch'>Found no Bars</div>}
+          <Pagination 
+            currentPage={currentPage}
+            previousPage={previousPage}
+            nextPage={nextPage}
+            perPage = {perPage}
+            pageLength = {barList.length}
+          />
+        </div>}
     </>
   );
 }
