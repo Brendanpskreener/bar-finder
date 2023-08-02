@@ -1,4 +1,5 @@
-const Pagination = ({currentPage, previousPage, nextPage, perPage, pageLength}) => {
+const Pagination = (props) => {
+  const {currentPage, previousPage, nextPage, perPage, pageLength} = props
 
   return (
     <div className="pagination">

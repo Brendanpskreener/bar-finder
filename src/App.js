@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import BarList from './components/BarList'
 import './App.css'
 import UserInput from './components/UserInput'
-import findBars from './repositories/Bars'
+import findBars from './interfaces/Bars'
 import Pagination from './components/Pagination'
 
 function App() {
@@ -83,7 +83,7 @@ function App() {
           />
         </div>}
     </>
-  );
+  )
 }
 
-export default App;
+export default App

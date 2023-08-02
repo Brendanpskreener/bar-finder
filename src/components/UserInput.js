@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react"
 import classes from './UserInput.module.css'
 
-const UserInput = ({defaultState, findBars, locationUnavailable, currentPage, setCurrentPage}) => { 
+const UserInput = (props) => { 
+  const {defaultState, findBars, locationUnavailable, currentPage, setCurrentPage} = props
+
   const [formData, setFormData] = useState(defaultState)
   const [timer, setTimer] = useState(null)
   const [formIsValid, setFormIsValid] = useState(false)
@@ -10,7 +12,7 @@ const UserInput = ({defaultState, findBars, locationUnavailable, currentPage, se
     clearTimeout(timer)
     const newTimer = setTimeout(() => {
       setFormIsValid(true)
-    }, 300);
+    }, 300)
     setTimer(newTimer)
   }
 
